@@ -1,0 +1,215 @@
+table _Medidas
+	lineageTag: 64daefe2-723c-5e87-a2c2-002da77a649e
+
+	measure 'Reclamações' = ```
+			countrows(fReclamacoes)
+			```
+		formatString: #,0
+		displayFolder: Volume
+		lineageTag: e73cb3f6-4f9a-5848-a12c-c80b602b72f9
+
+	measure 'Respondidas' = ```
+			sum(fReclamacoes[fl_respondida])
+			```
+		formatString: #,0
+		displayFolder: Volume
+		lineageTag: f24da293-c031-5e67-803d-05ae8ef033d0
+
+	measure 'Resolvidas' = ```
+			sum(fReclamacoes[fl_resolvida])
+			```
+		formatString: #,0
+		displayFolder: Volume
+		lineageTag: 66454dd2-f859-5500-8b76-25baf684b6f3
+
+	measure 'Meses' = ```
+			distinctcount(dCalendario[Ano Mês Num])
+			```
+		formatString: 0
+		displayFolder: Apoio
+		lineageTag: ec541e38-021d-5bbc-81fc-46793f16bdf8
+
+	measure 'Média Mensal' = ```
+			divide([Reclamações], [Meses])
+			```
+		formatString: #,0
+		displayFolder: Volume
+		lineageTag: c407e1d6-2449-5854-bd7b-7abff7c1d795
+
+	measure 'Operadoras Reclamadas' = ```
+			distinctcount(fReclamacoes[id_operadora])
+			```
+		formatString: #,0
+		displayFolder: Volume
+		lineageTag: bcce665d-0ed3-54a1-8d4e-021983916947
+
+	measure '% Resolução' = ```
+			divide([Resolvidas], [Respondidas])
+			```
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Qualidade
+		lineageTag: 356ade13-9211-541f-a905-352914a3fd41
+
+	measure '% Resposta' = ```
+			divide([Respondidas], [Reclamações])
+			```
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Qualidade
+		lineageTag: d95165fb-6f2f-5b35-8c0c-ef3a5cbe09ff
+
+	measure '% Assistencial' = ```
+			divide(calculate([Reclamações], fReclamacoes[Natureza] = "Assistencial"), [Reclamações])
+			```
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Volume
+		lineageTag: d922372d-9511-59af-8852-8c229e521df9
+
+	measure 'Total Beneficiários' = ```
+			sum(dOperadora[Beneficiários])
+			```
+		formatString: #,0
+		displayFolder: Taxa
+		lineageTag: bc44afda-3984-5864-9145-8215f085b3cb
+
+	measure 'Taxa por 10 mil' = ```
+			// reclamações por 10 mil beneficiários por mês (mesma lógica do IGR da ANS)
+			divide([Reclamações], [Total Beneficiários] * [Meses]) * 10000
+			```
+		formatString: 0.00
+		displayFolder: Taxa
+		lineageTag: 673da3f4-cd1b-5deb-a771-279732ebc8e3
+
+	measure 'Taxa Mercado' = ```
+			calculate([Taxa por 10 mil], removefilters(dOperadora))
+			```
+		formatString: 0.00
+		displayFolder: Taxa
+		lineageTag: fe372235-a136-5687-80df-96c0a2de074d
+
+	measure 'Índice vs Mercado' = ```
+			divide([Taxa por 10 mil], [Taxa Mercado])
+			```
+		formatString: 0.0
+		displayFolder: Taxa
+		lineageTag: 0675c443-7ba3-5e5d-b145-3bb81998a7f8
+
+	measure 'Nota IDSS' = ```
+			if(hasonevalue(dOperadora[id_operadora]), max(dOperadora[IDSS]))
+			```
+		formatString: 0.000
+		displayFolder: Qualidade
+		lineageTag: d929042c-0f68-5a69-9e9f-dbcabcb6b87f
+
+	measure 'Reclamações Mês Anterior' = ```
+			calculate([Reclamações], dateadd(dCalendario[Data], -1, month))
+			```
+		formatString: #,0
+		displayFolder: Tempo
+		lineageTag: 188a3cb5-bad4-56b7-8aa7-8d08dd0a1099
+
+	measure 'Var % Mês' = ```
+			var _ant = [Reclamações Mês Anterior]
+			return if(not isblank(_ant), divide([Reclamações] - _ant, _ant))
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Tempo
+		lineageTag: a7b6db4e-d666-55c8-b3fd-763b20bf40b1
+
+	measure 'Assunto Principal' = ```
+			var _top = topn(1, values(dAssunto[Assunto]), [Reclamações])
+			return maxx(_top, dAssunto[Assunto])
+			```
+		displayFolder: Texto
+		lineageTag: aee79aa2-00d1-50af-b17c-1b5416e96bca
+
+	measure '% Assunto Principal' = ```
+			var _a = [Assunto Principal]
+			return divide(calculate([Reclamações], dAssunto[Assunto] = _a), [Reclamações])
+			```
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Texto
+		lineageTag: 7e9e9502-6e78-5807-9a51-0959cc148074
+
+	measure 'Total Grande Porte' = ```
+			calculate(distinctcount(dOperadora[id_operadora]), removefilters(dOperadora), dOperadora[Porte] = "Grande")
+			```
+		formatString: 0
+		displayFolder: Ranking
+		lineageTag: 3836e9c6-b68f-5e1e-816d-f47befe38178
+
+	measure 'Ranking Taxa' = ```
+			// posição da operadora entre as de grande porte (1 = maior taxa de reclamação)
+			var _id = selectedvalue(dOperadora[id_operadora])
+			var _taxa = [Taxa por 10 mil]
+			var _tab =
+			    calculatetable(
+			        addcolumns(values(dOperadora[id_operadora]), "@taxa", calculate([Taxa por 10 mil])),
+			        removefilters(dOperadora),
+			        dOperadora[Porte] = "Grande"
+			    )
+			return
+			    if(
+			        not isblank(_id) && selectedvalue(dOperadora[Porte]) = "Grande",
+			        countrows(filter(_tab, [@taxa] > _taxa)) + 1
+			    )
+			```
+		formatString: 0
+		displayFolder: Ranking
+		lineageTag: 3d62e93b-fe89-5fb6-9e28-45f580a3e568
+
+	measure 'Ranking Texto' = ```
+			var _r = [Ranking Taxa]
+			return
+			    if(
+			        isblank(_r),
+			        "fora do ranking de grande porte",
+			        _r & "ª maior taxa entre " & [Total Grande Porte] & " operadoras de grande porte"
+			    )
+			```
+		displayFolder: Ranking
+		lineageTag: 65a16c6c-1dee-5f24-bbe8-52b95f5d9dec
+
+	measure 'Título Operadora' = ```
+			selectedvalue(dOperadora[Operadora], "Selecione uma operadora")
+			```
+		displayFolder: Texto
+		lineageTag: 3f30456f-af83-58cd-ac35-bd6b8bc08a3f
+
+	measure 'Subtítulo Operadora' = ```
+			if(
+			    hasonevalue(dOperadora[id_operadora]),
+			    selectedvalue(dOperadora[Modalidade]) & "  ·  porte " & lower(selectedvalue(dOperadora[Porte]))
+			        & "  ·  sede em " & selectedvalue(dOperadora[UF Sede])
+			        & "  ·  " & format([Total Beneficiários], "#,0") & " beneficiários"
+			)
+			```
+		displayFolder: Texto
+		lineageTag: ace72362-ccae-54f3-ac3c-a70b2ee9e765
+
+	measure 'Narrativa' = ```
+			var _a = [Assunto Principal]
+			var _p = [% Assunto Principal]
+			var _t = [Taxa por 10 mil]
+			var _m = [Taxa Mercado]
+			return
+			    "O assunto mais reclamado é " & _a & " (" & format(_p, "0.0%") & " do total). "
+			        & "A taxa é de " & format(_t, "0.00") & " reclamações por 10 mil beneficiários por mês"
+			        & if(
+			            hasonevalue(dOperadora[id_operadora]),
+			            ", contra " & format(_m, "0.00") & " do mercado.",
+			            "."
+			        )
+			```
+		displayFolder: Texto
+		lineageTag: ef014145-c1f7-502e-85ef-aeec0497ff23
+
+	partition _Medidas = m
+		mode: import
+		source =
+				let
+				    Fonte = #table(type table [Coluna = text], {}),
+				    SemColunas = Table.RemoveColumns(Fonte, {"Coluna"})
+				in
+				    SemColunas
+
+	annotation PBI_ResultType = Table

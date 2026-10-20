@@ -1,0 +1,38 @@
+table dUF
+	lineageTag: 33262451-2569-5038-8548-7186e0190574
+
+	column 'uf'
+		dataType: string
+		lineageTag: db56fa53-3311-5e61-9d9c-d1baf4068527
+		summarizeBy: none
+		sourceColumn: uf
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Estado'
+		dataType: string
+		lineageTag: e1ddeac1-880d-54ad-a2fc-92df5c32d7b8
+		summarizeBy: none
+		sourceColumn: Estado
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Região'
+		dataType: string
+		lineageTag: a7b81f79-b879-55fd-846c-42bf7835cbe7
+		summarizeBy: none
+		sourceColumn: Região
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dUF = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(PastaDados & "dim_uf.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"uf", type text}, {"Estado", type text}, {"Região", type text}}, "en-US")
+				in
+				    Tipos
+
+	annotation PBI_ResultType = Table

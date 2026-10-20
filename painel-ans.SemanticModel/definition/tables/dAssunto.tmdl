@@ -1,0 +1,57 @@
+table dAssunto
+	lineageTag: 04450b37-45fb-5118-a27c-517fe6e29eb5
+
+	column 'id_assunto'
+		dataType: int64
+		formatString: 0
+		isHidden
+		lineageTag: 96a58b5e-7a87-57af-a803-da5875b6a5d9
+		summarizeBy: none
+		sourceColumn: id_assunto
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Assunto'
+		dataType: string
+		lineageTag: 84f8e251-d7a5-5f8a-8475-1c207380c1d6
+		summarizeBy: none
+		sourceColumn: Assunto
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Tema'
+		dataType: string
+		lineageTag: a368b34d-4f6b-56f9-af8b-d42bac81b67e
+		summarizeBy: none
+		sourceColumn: Tema
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Grupo'
+		dataType: string
+		lineageTag: 10da6a7f-e635-51e4-9c09-312f88a1a470
+		summarizeBy: none
+		sourceColumn: Grupo
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Assunto Completo'
+		dataType: string
+		isHidden
+		lineageTag: 28c67d17-1c34-5a41-b662-c06f3647d759
+		summarizeBy: none
+		sourceColumn: Assunto Completo
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dAssunto = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(PastaDados & "dim_assunto.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"id_assunto", Int64.Type}, {"Assunto", type text}, {"Tema", type text}, {"Grupo", type text}, {"Assunto Completo", type text}}, "en-US")
+				in
+				    Tipos
+
+	annotation PBI_ResultType = Table

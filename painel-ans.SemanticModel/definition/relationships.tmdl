@@ -1,0 +1,19 @@
+relationship b9377505-4435-5f3f-baae-670302b8541a
+	fromColumn: fReclamacoes.'id_operadora'
+	toColumn: dOperadora.'id_operadora'
+
+relationship fdb40632-5f3a-5e50-aff2-2406bf061cca
+	fromColumn: fReclamacoes.'id_assunto'
+	toColumn: dAssunto.'id_assunto'
+
+relationship 84f1372c-9bb4-5951-ab6c-461fe6ed98ee
+	fromColumn: fReclamacoes.'id_faixa_etaria'
+	toColumn: dFaixaEtaria.'id_faixa_etaria'
+
+relationship e39f4ece-92d5-59f3-97d1-5e0b0964849f
+	fromColumn: fReclamacoes.'uf'
+	toColumn: dUF.'uf'
+
+relationship fab04234-b7ed-53c8-bffe-004ff5f30a40
+	fromColumn: fReclamacoes.'data_abertura'
+	toColumn: dCalendario.'Data'

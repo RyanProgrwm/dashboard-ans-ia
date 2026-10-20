@@ -1,0 +1,106 @@
+table dCalendario
+	lineageTag: 1252ada1-7cae-5a4e-b801-6d3816802c49
+	dataCategory: Time
+
+	column 'Data'
+		isKey
+		formatString: dd/mm/yyyy
+		lineageTag: b9f1cbe7-fd4b-5bd5-b9c4-ede5271ce550
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Data]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Ano'
+		formatString: 0
+		lineageTag: 03809072-bd78-55f9-9890-3f8680aedb33
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Ano]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Mês Num'
+		formatString: 0
+		isHidden
+		lineageTag: 8eb28afd-8904-5b72-a83c-2cd20698d794
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Mês Num]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Mês'
+		lineageTag: d3e79094-ea40-58bd-9ae7-5effe8003cfd
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Mês]
+		sortByColumn: 'Mês Num'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Ano Mês Num'
+		formatString: 0
+		isHidden
+		lineageTag: 6599fc48-df7c-5c91-bf06-547af8001a7b
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Ano Mês Num]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Mês Ano'
+		lineageTag: 252bc377-53aa-5eef-acf6-36c0d1f2a0b6
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Mês Ano]
+		sortByColumn: 'Ano Mês Num'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Trimestre'
+		lineageTag: 4b466f55-ba09-5a1a-9ecd-2a9733ef6aae
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Trimestre]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Dia Semana Num'
+		formatString: 0
+		isHidden
+		lineageTag: 846be125-7a21-5d2e-a2e6-adfe3bea68fc
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Dia Semana Num]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Dia da Semana'
+		lineageTag: af097ff7-8705-5712-b621-c44aa4704b27
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Dia da Semana]
+		sortByColumn: 'Dia Semana Num'
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dCalendario = calculated
+		mode: import
+		source = ```
+				var _ini = date(year(min(fReclamacoes[data_abertura])), 1, 1)
+				var _fim = date(year(max(fReclamacoes[data_abertura])), 12, 31)
+				return
+				    addcolumns(
+				        selectcolumns(calendar(_ini, _fim), "Data", [Date]),
+				        "Ano", year([Data]),
+				        "Mês Num", month([Data]),
+				        "Mês", format([Data], "mmm"),
+				        "Ano Mês Num", year([Data]) * 100 + month([Data]),
+				        "Mês Ano", format([Data], "mmm/yy"),
+				        "Trimestre", "T" & quarter([Data]),
+				        "Dia Semana Num", weekday([Data], 2),
+				        "Dia da Semana", format([Data], "ddd")
+				    )
+				```

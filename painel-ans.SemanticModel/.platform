@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "painel-ans"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "8afa0a0c-707b-588b-9528-cfb77a3bf653"
+  }
+}

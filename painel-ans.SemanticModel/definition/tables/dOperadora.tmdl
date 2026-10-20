@@ -1,0 +1,97 @@
+table dOperadora
+	lineageTag: b91d3ae3-d193-5cac-980e-e4ed58d4d2e4
+
+	column 'id_operadora'
+		dataType: string
+		isHidden
+		lineageTag: 6ca2c16d-cf28-5e93-8ae0-eb8f91eecb42
+		summarizeBy: none
+		sourceColumn: id_operadora
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Operadora'
+		dataType: string
+		lineageTag: 2d500c3f-e11f-5f2f-a152-0530493773c9
+		summarizeBy: none
+		sourceColumn: Operadora
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Razão Social'
+		dataType: string
+		lineageTag: 5cec63b8-a381-5b79-9ea6-9b6a0ca2f47c
+		summarizeBy: none
+		sourceColumn: Razão Social
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Modalidade'
+		dataType: string
+		lineageTag: 67b20d66-b52a-542a-8e77-44860913d8be
+		summarizeBy: none
+		sourceColumn: Modalidade
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'UF Sede'
+		dataType: string
+		lineageTag: f6c6cc19-ea51-54dc-a3fc-1055465a8ef1
+		summarizeBy: none
+		sourceColumn: UF Sede
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Situação'
+		dataType: string
+		lineageTag: 13379b7b-eef7-575f-8cb8-ed18951d15ae
+		summarizeBy: none
+		sourceColumn: Situação
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Beneficiários'
+		dataType: int64
+		formatString: #,0
+		lineageTag: 3fd902e5-e5c4-5da4-b108-aae5c5bb42f5
+		summarizeBy: none
+		sourceColumn: Beneficiários
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Porte'
+		dataType: string
+		lineageTag: a0de33da-644a-518d-96f3-44720bca75c6
+		summarizeBy: none
+		sourceColumn: Porte
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'IDSS'
+		dataType: double
+		formatString: 0.000
+		lineageTag: 0da4b593-e384-51ef-b411-047da3731a97
+		summarizeBy: none
+		sourceColumn: IDSS
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Faixa IDSS'
+		dataType: string
+		lineageTag: 304d0adc-a0e0-5265-9025-a02d900bd797
+		summarizeBy: none
+		sourceColumn: Faixa IDSS
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dOperadora = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(PastaDados & "dim_operadora.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"id_operadora", type text}, {"Operadora", type text}, {"Razão Social", type text}, {"Modalidade", type text}, {"UF Sede", type text}, {"Situação", type text}, {"Beneficiários", Int64.Type}, {"Porte", type text}, {"IDSS", type number}, {"Faixa IDSS", type text}}, "en-US")
+				in
+				    Tipos
+
+	annotation PBI_ResultType = Table

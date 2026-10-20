@@ -1,0 +1,11 @@
+# dados (baixe da ANS e rode o etl; links no README)
+dados/brutos/
+dados/modelo/*.csv
+
+# arquivos locais do power bi
+**/.pbi/localSettings.json
+**/.pbi/cache.abf
+
+# temporários do gerador
+gerador/.render/
+__pycache__/

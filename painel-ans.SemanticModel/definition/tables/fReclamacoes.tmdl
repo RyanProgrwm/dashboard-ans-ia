@@ -1,0 +1,140 @@
+table fReclamacoes
+	lineageTag: dda03c0d-f7b9-50fe-ad78-b8bd95b07c30
+
+	column 'id_demanda'
+		dataType: string
+		isHidden
+		lineageTag: 1e5daf2c-ae0e-5e7b-9fc3-868d740f1af9
+		summarizeBy: none
+		sourceColumn: id_demanda
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'data_abertura'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		isHidden
+		lineageTag: 4e3cff44-6e85-5d04-ba8e-015d92be1e24
+		summarizeBy: none
+		sourceColumn: data_abertura
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'id_operadora'
+		dataType: string
+		isHidden
+		lineageTag: 6ca2c16d-cf28-5e93-8ae0-eb8f91eecb42
+		summarizeBy: none
+		sourceColumn: id_operadora
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'id_assunto'
+		dataType: int64
+		formatString: 0
+		isHidden
+		lineageTag: 96a58b5e-7a87-57af-a803-da5875b6a5d9
+		summarizeBy: none
+		sourceColumn: id_assunto
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'uf'
+		dataType: string
+		isHidden
+		lineageTag: db56fa53-3311-5e61-9d9c-d1baf4068527
+		summarizeBy: none
+		sourceColumn: uf
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'id_faixa_etaria'
+		dataType: int64
+		formatString: 0
+		isHidden
+		lineageTag: 681eaaa7-6721-5bb5-9371-887d349821c8
+		summarizeBy: none
+		sourceColumn: id_faixa_etaria
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Idade'
+		dataType: int64
+		formatString: 0
+		lineageTag: abf6134c-2cfa-517b-aca6-d52ea1d70404
+		summarizeBy: none
+		sourceColumn: Idade
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Sexo'
+		dataType: string
+		lineageTag: ba9a897f-b9bf-50b2-b597-dc0ed60b4a07
+		summarizeBy: none
+		sourceColumn: Sexo
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Tipo de Plano'
+		dataType: string
+		lineageTag: 1e6e87cc-ddef-5077-8394-9b05099291df
+		summarizeBy: none
+		sourceColumn: Tipo de Plano
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Canal'
+		dataType: string
+		lineageTag: d5eaaa9c-24ff-5e49-98e5-c769b0c2dafa
+		summarizeBy: none
+		sourceColumn: Canal
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Natureza'
+		dataType: string
+		lineageTag: 7c59b330-3437-59e5-bbfc-49684e215e06
+		summarizeBy: none
+		sourceColumn: Natureza
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Resposta'
+		dataType: string
+		lineageTag: 5830800f-9af2-5338-b776-f04fd7e13598
+		summarizeBy: none
+		sourceColumn: Resposta
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'fl_respondida'
+		dataType: int64
+		formatString: 0
+		isHidden
+		lineageTag: 46e6c3fc-5cc4-5445-8c1b-d800cb946998
+		summarizeBy: none
+		sourceColumn: fl_respondida
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'fl_resolvida'
+		dataType: int64
+		formatString: 0
+		isHidden
+		lineageTag: 8ec81ee1-66f6-526d-b56d-f3e987b032a9
+		summarizeBy: none
+		sourceColumn: fl_resolvida
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fReclamacoes = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents(PastaDados & "fato_reclamacoes.csv"), [Delimiter = ";", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Cabecalhos = Table.PromoteHeaders(Fonte, [PromoteAllScalars = true]),
+				    Tipos = Table.TransformColumnTypes(Cabecalhos, {{"id_demanda", type text}, {"data_abertura", type date}, {"id_operadora", type text}, {"id_assunto", Int64.Type}, {"uf", type text}, {"id_faixa_etaria", Int64.Type}, {"Idade", Int64.Type}, {"Sexo", type text}, {"Tipo de Plano", type text}, {"Canal", type text}, {"Natureza", type text}, {"Resposta", type text}, {"fl_respondida", Int64.Type}, {"fl_resolvida", Int64.Type}}, "en-US")
+				in
+				    Tipos
+
+	annotation PBI_ResultType = Table

@@ -1,0 +1,13 @@
+{
+  "reclamacoes_lidas": 325101,
+  "assuntos_brutos_distintos": 40,
+  "assuntos_apos_limpeza": 19,
+  "idade_vazia": 2,
+  "idade_invalida_maior_110": 9,
+  "uf_nao_informada": 3,
+  "sem_operadora": 49,
+  "operadoras_com_beneficiarios_2025": 920,
+  "nomes_de_operadora_desambiguados": 316,
+  "operadoras_orfas_na_fato": 0,
+  "operadoras_canceladas_com_reclamacao": 126
+}

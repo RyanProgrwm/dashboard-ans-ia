@@ -1,0 +1,5 @@
+expression PastaDados = "C:\Program Files\Oracle\VirtualBox\Pasta_Comparilhada\desenv_ia\powerbi-ans-pro\dados\modelo\" meta [IsParameterQuery = true, Type = "Text", IsParameterQueryRequired = true]
+	lineageTag: 525fe308-03e2-5f02-a0a2-ea05b02107df
+
+	annotation PBI_ResultType = Text
+
