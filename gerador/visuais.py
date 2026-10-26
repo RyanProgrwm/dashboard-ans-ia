@@ -195,9 +195,12 @@ def botao(pg, chave, x, y, w, h, tipo, destino=None):
                       "icon": [{"properties": {"show": b(False)}, "selector": {"id": "default"}}],
                       "text": [{"properties": {"show": b(False)}, "selector": {"id": "default"}}],
                       "outline": [{"properties": {"show": b(False)}, "selector": {"id": "default"}}],
+                      # o "show" do preenchimento vale para todos os estados: fica ligado e o
+                      # estado normal é 100% transparente
                       "fill": [
-                          {"properties": {"show": b(False)}, "selector": {"id": "default"}},
-                          {"properties": {"show": b(True), "fillColor": cor("#22D3EE"), "transparency": d(88)},
+                          {"properties": {"show": b(True), "fillColor": cor("#22D3EE"), "transparency": d(100)},
+                           "selector": {"id": "default"}},
+                          {"properties": {"fillColor": cor("#22D3EE"), "transparency": d(88)},
                            "selector": {"id": "hover"}},
                       ],
                   },
